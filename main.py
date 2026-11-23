@@ -19,18 +19,16 @@ while True:
         print("Opção inválida. Tente novamente.")
         continue
 
-    # Leitura dos processos.
+
     try:
         processos = ler_processos("processos.txt")
     except (ValueError, OSError) as erro:
         print("Erro na leitura:", erro)
         continue
 
-    # Executa o FCFS.
     if opcao == "1":
         resultados = fcfs(processos)
 
-    # Executa o Round Robin.
     elif opcao == "2":
 
         try:
@@ -47,7 +45,6 @@ while True:
 
     print("\n=== RESULTADOS ===")
 
-    # Apresenta os resultados de cada processo.
     for processo in processos:
         resposta = (
             processo["primeira_execucao"]
@@ -60,13 +57,13 @@ while True:
             f"tempo de resposta = {resposta}"
         )
 
-    # Apresenta os resultados gerais.
+
     print("\nTempo total:", resultados["tempo_total"])
     print("Processos finalizados:", resultados["finalizados"])
     print("Tempo médio de resposta:", resultados["tempo_medio_resposta"])
     print("Throughput:", resultados["throughput"])
 
-    # Pergunta se o usuário deseja realizar outra simulação.
+
     print("\nDeseja realizar outra simulação?")
     print("1 - Sim")
     print("0 - Não")
