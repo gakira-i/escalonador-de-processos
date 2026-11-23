@@ -1,13 +1,7 @@
-
-from pathlib import Path
-
 from leitorSO import ler_processos
-from fcfs import FCFS
-from round_robin import RoundRobin
-from simuladorSO import Simulador
+from fcfs import fcfs
+from round_robin import round_robin
 
-
-pasta = Path(__file__).resolve().parent
 
 while True:
     print("\n=== SIMULADOR DE ESCALONAMENTO ===")
@@ -25,24 +19,35 @@ while True:
         print("Opção inválida. Tente novamente.")
         continue
 
-    processos = ler_processos(pasta / "processos.txt")
-    simulador: Simulador
+    # Leitura dos processos.
+    try:
+        processos = ler_processos("processos.txt")
+    except (ValueError, OSError) as erro:
+        print("Erro na leitura:", erro)
+        continue
+
+    # Executa o FCFS.
     if opcao == "1":
-        simulador = FCFS(processos)
+        resultados = fcfs(processos)
 
+    # Executa o Round Robin.
     elif opcao == "2":
-        quantum = int(input("Informe o quantum: "))
-        simulador = RoundRobin(processos, quantum)
 
-    simulador.executar()
+        try:
+            quantum = int(input("Informe o quantum: "))
+        except ValueError:
+            print("O quantum deve ser um número inteiro.")
+            continue
 
-    print("\n=== HISTÓRICO DA SIMULAÇÃO ===")
+        if quantum <= 0:
+            print("O quantum deve ser positivo.")
+            continue
 
-    for evento in simulador.historico:
-        print(evento)
+        resultados = round_robin(processos, quantum)
 
     print("\n=== RESULTADOS ===")
 
+    # Apresenta os resultados de cada processo.
     for processo in processos:
         resposta = (
             processo["primeira_execucao"]
@@ -55,21 +60,22 @@ while True:
             f"tempo de resposta = {resposta}"
         )
 
-    print("Tempo total:", simulador.tempo)
-    print(
-        "Tempo médio de resposta:",
-        simulador.calcular_tempo_medio_resposta()
-    )
-    print(
-        "Throughput:",
-        simulador.calcular_throughput()
-    )
+    # Apresenta os resultados gerais.
+    print("\nTempo total:", resultados["tempo_total"])
+    print("Processos finalizados:", resultados["finalizados"])
+    print("Tempo médio de resposta:", resultados["tempo_medio_resposta"])
+    print("Throughput:", resultados["throughput"])
 
+    # Pergunta se o usuário deseja realizar outra simulação.
     print("\nDeseja realizar outra simulação?")
     print("1 - Sim")
     print("0 - Não")
 
     repetir = input("Escolha: ")
+
+    while repetir != "1" and repetir != "0":
+        print("Opção inválida. Tente novamente.")
+        repetir = input("Escolha: ")
 
     if repetir == "0":
         print("Simulador encerrado.")

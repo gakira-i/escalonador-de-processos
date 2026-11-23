@@ -1,49 +1,112 @@
 
 
-from simuladorSO import Simulador
 
+def round_robin(processos, quantum):
 
-class RoundRobin(Simulador):
-    def __init__(self, processos, quantum):
-        super().__init__(processos)
+    # RR: valida o quantum.
+    if quantum <= 0:
+        raise ValueError("O quantum deve ser positivo.")
 
-        if quantum <= 0:
-            raise ValueError("O quantum deve ser maior que zero.")
+    tempo = 0
+    fila_prontos = []
+    bloqueados = []
+    executando = None
+    finalizados = 0
 
-        self.quantum = quantum
-        self.tempo_quantum = 0
+    # RR: contador de ciclos do quantum.
+    tempo_quantum = 0
 
-    def selecionar_processo(self):
-        if self.executando is None and self.fila_prontos:
-            processo = self.fila_prontos.popleft()
-            self.iniciar_execucao(processo)
-            self.tempo_quantum = 0
+    while finalizados < len(processos):
 
-    def executar_ciclo_cpu(self):
-        super().executar_ciclo_cpu()
+        # Verifica a chegada dos processos.
+        for processo in processos:
+            if processo["chegada"] == tempo:
+                processo["estado"] = "pronto"
+                fila_prontos.append(processo)
 
-        if self.executando is not None:
-            self.tempo_quantum += 1
+        # Seleciona o primeiro processo da fila.
+        if executando is None and fila_prontos:
+            executando = fila_prontos.pop(0)
+            executando["estado"] = "executando"
 
-    def verificar_preempcao(self):
-        if self.executando is None:
-            return
+            # RR: reinicia o contador do quantum.
+            tempo_quantum = 0
 
-        if self.tempo_quantum < self.quantum:
-            return
+            # Registra a primeira execução.
+            if executando["primeira_execucao"] is None:
+                executando["primeira_execucao"] = tempo
 
-        processo = self.executando
+        # Executa um ciclo de CPU.
+        if executando is not None:
+            executando["restante"] -= 1
 
-        processo["estado"] = "pronto"
-        self.fila_prontos.append(processo)
+            # RR: contabiliza um ciclo do quantum.
+            tempo_quantum += 1
 
-        self.historico.append(
-            f"Ciclo {self.tempo + 1}: "
-            f"{processo['id']} esgotou o quantum "
-            "e voltou à fila de prontos."
-        )
+        # Executa um ciclo de E/S.
+        for processo in bloqueados.copy():
+            processo["restante"] -= 1
 
-        self.executando = None
-        self.tempo_quantum = 0
+            # Verifica se a E/S terminou.
+            if processo["restante"] == 0:
+                processo["indice"] += 1
 
-    
+                indice = processo["indice"]
+                processo["restante"] = processo["atividades"][indice]
+
+                processo["estado"] = "pronto"
+
+                fila_prontos.append(processo)
+                bloqueados.remove(processo)
+
+        # Verifica se a atividade de CPU terminou.
+        if executando is not None:
+            if executando["restante"] == 0:
+
+                executando["indice"] += 1
+
+                # Verifica se o processo terminou.
+                if executando["indice"] == len(executando["atividades"]):
+                    executando["estado"] = "finalizado"
+                    finalizados += 1
+
+                # Caso contrário, realiza E/S.
+                else:
+                    executando["estado"] = "bloqueado"
+
+                    indice = executando["indice"]
+                    executando["restante"] = executando["atividades"][indice]
+
+                    bloqueados.append(executando)
+
+                # Libera a CPU.
+                executando = None
+
+        # RR: realiza a preempção quando o quantum termina.
+        if executando is not None and tempo_quantum >= quantum:
+            executando["estado"] = "pronto"
+            fila_prontos.append(executando)
+            executando = None
+
+        # Avança o relógio da simulação.
+        tempo += 1
+
+    # Calcula o tempo médio de resposta.
+    soma_respostas = 0
+
+    for processo in processos:
+        resposta = processo["primeira_execucao"] - processo["chegada"]
+        soma_respostas += resposta
+
+    tempo_medio_resposta = soma_respostas / len(processos)
+
+    # Calcula o throughput.
+    throughput = finalizados / tempo
+
+    # Retorna os resultados da simulação.
+    return {
+        "tempo_total": tempo,
+        "finalizados": finalizados,
+        "tempo_medio_resposta": tempo_medio_resposta,
+        "throughput": throughput
+    }
