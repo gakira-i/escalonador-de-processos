@@ -3,7 +3,7 @@ SIMULADOR DE ESCALONAMENTO DE PROCESSOS EM SISTEMAS OPERACIONAIS
 
 Disciplina: Sistemas Operacionais
 
-Instituicao: Universidade Estadual de Maringa (UEM)
+Instituição: Universidade Estadual de Maringá (UEM)
 
 Linguagem: Python
 
@@ -13,7 +13,7 @@ Este projeto implementa um simulador baseado em ciclos de clock para
 
 avaliação comparativa de algoritmos de escalonamento de processos em uma única
 
-CPU (com operações de Entrada/Saida paralelas e sem custo de troca de
+CPU (com operações de Entrada/SaÍda paralelas e sem custo de troca de
 
 contexto).
 
@@ -42,7 +42,7 @@ Turnaround médio e tempo médio de espera.
 
 2. REQUISITOS E COMPILAÇÃO
 
-Por ser desenvolvido em Python, não há necessidade de geracao de binário
+Por ser desenvolvido em Python, não há necessidade de geração de binário
 
 ou compilação prévia do código-fonte.
 
@@ -50,7 +50,7 @@ Requisitos:
 
 Python 3.8 ou superior instalado no sistema operacional;
 
-Utiliza apenas bibliotecas padrao do Python.
+Utiliza apenas bibliotecas padrão do Python.
 
 
 3. ESTRUTURA DO ARQUIVO DE ENTRADA
@@ -75,7 +75,7 @@ Observações sobre o formato:
 
 Toda linha deve iniciar e terminar com um valor de rajada de CPU.
 
-Linhas em branco e linhas iniciadas com '#' (comentarios) sao ignoradas.
+Linhas em branco e linhas iniciadas com '#' (comentários) são ignoradas.
 
 
 
@@ -94,7 +94,7 @@ Exemplo válido de arquivo de entrada (processos.txt):
   9: 7, 2, 9, 1, 8, 1, 20, 1, 18, 3, 9
 
 
-4. PASSO A PASSO PARA EXECUCAO E PARAMETRIZACAO
+4. PASSO A PASSO PARA EXECUÇÃO E PARAMETRIZAÇÃO
 
 Abra o terminal na pasta raiz do projeto e execute o simulador conforme a
 
@@ -116,7 +116,7 @@ A) Execução via linha de comando (CLI):
 
     [quantum]         : Inteiro positivo representando o quantum em ciclos de
 
-                           clock (obrigatorio apenas quando algoritmo = 'rr').
+                           clock (obrigatório apenas quando algoritmo = 'rr').
 
 
 
@@ -152,11 +152,11 @@ A) Execução via linha de comando (CLI):
 
 
 
-B) Execução direta pelo codigo (caso nao utilize argumentos CLI):
+B) Execução direta pelo código (caso não utilize argumentos CLI):
 
    Abra o arquivo main.py, localize o bloco principal `if __name__ == "__main__":`
 
-   e ajuste as variaveis de configuracao:
+   e ajuste as variáveis de configuração:
 
 
 
@@ -177,7 +177,7 @@ Em conformidade com as diretrizes da disciplina e o guia de uso de IA da UEM,
 
 ferramentas de IA generativa foram utilizadas exclusivamente como apoio
 
-conceitual na validação da logica de simulação por ciclos e na revisão
+conceitual na validação da lógica de simulação por ciclos e na revisão
 
 estrutural da documentação. Todo o código-fonte e os experimentos
 
